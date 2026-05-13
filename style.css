@@ -57,6 +57,19 @@ body {
   color: #e8e8e8;
 }
 
+#current-date,
+#current-time{
+  font-family:'HangyakuMincho', serif;
+  font-size:20px;
+  color:#ffffff;
+  margin-top: 8px;
+  display:inline-block;
+}
+
+#current-date{
+  margin-right:6px;
+}
+
 /* ============================
  * リング表示エリア
  * ============================ */

@@ -31,7 +31,22 @@ async function init() {
 
   const svg = document.getElementById('ring-svg');
   renderRing(svg, year, LAT, LON);
-  setInterval(() => renderCurrentMomentSun(svg, year, LAT), 60_000); // 1分ごとに更新
+  updateDateTime();
+  setInterval(updateDateTime, 1_000);
+  setInterval(() => {
+    renderCurrentMomentSun(svg, year, LAT);
+}, 60_000);
+}
+
+function updateDateTime() {
+  const jst = new Date(Date.now() + 9 * 3600 * 1000);
+  const month = jst.getUTCMonth() + 1;
+  const day = jst.getUTCDate();
+  const h = String(jst.getUTCHours()).padStart(2, '0');
+  const m = String(jst.getUTCMinutes()).padStart(2, '0');
+  const s = String(jst.getUTCSeconds()).padStart(2, '0');
+  document.getElementById('current-date').textContent = `${month}/${day}`;
+  document.getElementById('current-time').textContent = `${h}:${m}:${s}`;
 }
 
 if (document.readyState === 'loading') {
