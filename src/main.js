@@ -31,6 +31,14 @@ async function init() {
 
   const svg = document.getElementById('ring-svg');
   renderRing(svg, year, LAT, LON);
+
+  // スマホ拡大用
+  const [sx, sy] = renderCurrentMomentSun(svg, year, LAT);
+  if (window.innerWidth <= 768) {
+    const zoom = 15;  // 小さいほど拡大
+    svg.setAttribute('viewBox', `${sx - zoom/2} ${sy - zoom/3} ${zoom} ${zoom}`);
+}
+
   updateDateTime();
   setInterval(updateDateTime, 1_000);
   setInterval(() => {
@@ -48,6 +56,7 @@ function updateDateTime() {
   document.getElementById('current-date').textContent = `${month}/${day}`;
   document.getElementById('current-time').textContent = `${h}:${m}:${s}`;
 }
+
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);

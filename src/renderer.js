@@ -262,6 +262,9 @@ export function renderCurrentMomentSun(svg, year, lat) {
   const nDays = daysInYear(year);
   const now = new Date();
   const jstNow = new Date(now.getTime() + 9 * 3600 * 1000);
+  // ↓テスト用手入力時刻　↑本番用時刻
+  //const jstNow = new Date(Date.UTC(year, 5, 22, 0, 0, 0));
+
   const yearStart = new Date(Date.UTC(year, 0, 1));
   const doyDecimal = (jstNow.getTime() - yearStart.getTime()) / 86400000;
 
@@ -277,7 +280,7 @@ export function renderCurrentMomentSun(svg, year, lat) {
   const existing = svg.querySelector('#sun-marker');
   if(existing){
     existing.setAttribute('transform', `translate(${sx}, ${sy})`);
-    return;
+    return[sx, sy];
   }
 
   // sum.svg を <image> で参照（外部SVGをそのままラスタライズして表示）
@@ -304,4 +307,6 @@ export function renderCurrentMomentSun(svg, year, lat) {
 sunImg.appendChild(anim);
 g.appendChild(sunImg);
 svg.appendChild(g);
+
+
 }
