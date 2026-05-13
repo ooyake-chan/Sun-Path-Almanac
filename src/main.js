@@ -35,7 +35,7 @@ async function init() {
   setInterval(updateDateTime, 1_000);
   setInterval(() => {
     renderCurrentMomentSun(svg, year, LAT);
-}, 60_000);
+}, 15_000);
 }
 
 function updateDateTime() {
