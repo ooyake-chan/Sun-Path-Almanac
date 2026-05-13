@@ -57,6 +57,22 @@ body {
   color: #e8e8e8;
 }
 
+#current-datetime {
+  position: fixed;
+  top: 96px;   /* #top-left の coords の下あたり */
+  left: 56px;
+}
+
+@media (max-width: 768px) {
+  #current-datetime {
+    top: auto;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+}
+
 #current-date,
 #current-time{
   font-family:'HangyakuMincho', serif;
