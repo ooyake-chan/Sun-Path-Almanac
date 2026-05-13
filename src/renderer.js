@@ -172,33 +172,33 @@ export function renderRing(svg, year, lat, lon) {
     if (isMajor) {
       // 二分二至
       markerColor = '#FFFFFF';
-      markerSize = 1.1;
+      markerSize = 0.8;
       symbolId = '#star-big';
       kanjiColor = '#FFFFFF';
       kanjiSize = 1.4;
       kanjiFamily = 'HakkouMincho, serif';
-      dateColor = '#d0d0d0';
+      dateColor = '#FFFFFF';
       dateSize = 0.65;
     } else if (isSec) {
       // 四立
-      markerColor = '#f0d99c';
-      markerSize = 1.0;
+      markerColor = '#FFFFFF';
+      markerSize = 0.3;
       symbolId = '#star-big';
-      kanjiColor = '#f0d99c';
-      kanjiSize = 1.1;
+      kanjiColor = '#FFFFFF';
+      kanjiSize = 0.7;
       kanjiFamily = 'HakkouMincho, serif';
-      dateColor = '#c8c0a8';
+      dateColor = '#FFFFFF';
       dateSize = 0.55;
     } else {
       // その他16節気
-      markerColor = '#aaaaaa';
-      markerSize = 0.55;
+      markerColor = '#FFFFFF';
+      markerSize = 0.3;
       symbolId = '#star-small';
-      kanjiColor = '#cccccc';
-      kanjiSize = 0.78;
+      kanjiColor = '#FFFFFF';
+      kanjiSize = 0.7;
       kanjiFamily = '"Noto Serif JP", serif';
-      dateColor = '#888888';
-      dateSize = 0.45;
+      dateColor = '#FFFFFF';
+      dateSize = 0.55;
     }
 
     // マーカー（星型シンボル参照、color で fill 上書き）
@@ -253,12 +253,13 @@ export function renderRing(svg, year, lat, lon) {
     svg.appendChild(kanjiText);
   }
 
-  // ---- 現在時刻の太陽マーカー（M1ではページロード時点で固定） ----
-  renderCurrentMomentSun(svg, year, lat, nDays);
+  // ---- 現在時刻の太陽マーカー ----
+  renderCurrentMomentSun(svg, year, lat);
 }
 
 /** 現在JST時刻の太陽位置に sum.svg を配置 */
-function renderCurrentMomentSun(svg, year, lat, nDays) {
+export function renderCurrentMomentSun(svg, year, lat) {
+  const nDays = daysInYear(year);
   const now = new Date();
   const jstNow = new Date(now.getTime() + 9 * 3600 * 1000);
   const yearStart = new Date(Date.UTC(year, 0, 1));
@@ -273,12 +274,19 @@ function renderCurrentMomentSun(svg, year, lat, nDays) {
   const rNow = BASE_RADIUS + altNow * ALTITUDE_SCALE;
   const [sx, sy] = polarToXY(rNow, thetaNow);
 
+  const existing = svg.querySelector('#sun-marker');
+  if(existing){
+    existing.setAttribute('transform', `translate(${sx}, ${sy})`);
+    return;
+  }
+
   // sum.svg を <image> で参照（外部SVGをそのままラスタライズして表示）
-  const SUN_SIZE = 5; // ring単位での表示サイズ。要調整。
+  const SUN_SIZE = 5; 
+   const g = el('g', { id: 'sun-marker', transform: `translate(${sx}, ${sy})` });
   const sunImg = el('image', {
     href: 'sun.svg',
-    x: sx - SUN_SIZE / 2,
-    y: sy - SUN_SIZE / 2,
+    x: -SUN_SIZE / 2,
+    y: -SUN_SIZE / 2,
     width: SUN_SIZE,
     height: SUN_SIZE,
   });
@@ -287,12 +295,13 @@ function renderCurrentMomentSun(svg, year, lat, nDays) {
   const anim = el('animateTransform', {
     attributeName: 'transform',
     type: 'rotate',
-    from: `0 ${sx} ${sy}`,   // 0度、回転中心 = 太陽の中心
-    to: `360 ${sx} ${sy}`,   // 360度まで
+    from: '0 0 0',
+    to: '360 0 0',
     dur: '600s',              // ← ここで速さを調整（数字を大きくするほど遅い）
     repeatCount: 'indefinite',
   });
 
 sunImg.appendChild(anim);
-svg.appendChild(sunImg);
+g.appendChild(sunImg);
+svg.appendChild(g);
 }

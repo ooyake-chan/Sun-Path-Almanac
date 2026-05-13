@@ -2,7 +2,7 @@
  * main.js
  * エントリポイント。フォントロード完了を待ってからリングを描画する。
  */
-import { renderRing } from './renderer.js';
+import { renderRing, renderCurrentMomentSun } from './renderer.js';
 
 const LAT = 35.44;
 const LON = 139.45;
@@ -31,6 +31,7 @@ async function init() {
 
   const svg = document.getElementById('ring-svg');
   renderRing(svg, year, LAT, LON);
+  setInterval(() => renderCurrentMomentSun(svg, year, LAT), 60_000); // 1分ごとに更新
 }
 
 if (document.readyState === 'loading') {
