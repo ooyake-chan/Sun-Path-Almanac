@@ -185,7 +185,7 @@ export function renderRing(svg, year, lat, lon) {
       markerSize = 0.3;
       symbolId = '#star-big';
       kanjiColor = '#FFFFFF';
-      kanjiSize = 0.7;
+      kanjiSize = 1.0;
       kanjiFamily = 'HakkouMincho, serif';
       dateColor = '#FFFFFF';
       dateSize = 0.55;
@@ -297,7 +297,7 @@ export function renderCurrentMomentSun(svg, year, lat) {
     type: 'rotate',
     from: '0 0 0',
     to: '360 0 0',
-    dur: '600s',              // ← ここで速さを調整（数字を大きくするほど遅い）
+    dur: '1200s',              // ← ここで速さを調整（数字を大きくするほど遅い）
     repeatCount: 'indefinite',
   });
 
