@@ -36,7 +36,17 @@ async function init() {
   const [sx, sy] = renderCurrentMomentSun(svg, year, LAT);
   if (window.innerWidth <= 768) {
     const zoom = 15;  // 小さいほど拡大
-    svg.setAttribute('viewBox', `${sx - zoom/2} ${sy - zoom/3} ${zoom} ${zoom}`);
+    const zoomedViewBox = `${sx - zoom/2} ${sy - zoom/3} ${zoom} ${zoom}`;
+    const fullViewBox = '-18 -10 38 38';  // index.html の初期値と合わせる
+    let isZoomed = true;
+
+    svg.setAttribute('viewBox', zoomedViewBox);
+
+    // タップで切り替え
+    svg.addEventListener('click', () => {
+    isZoomed = !isZoomed;
+    svg.setAttribute('viewBox', isZoomed ? zoomedViewBox : fullViewBox);
+  });
 }
 
   updateDateTime();
