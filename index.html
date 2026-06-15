@@ -31,6 +31,63 @@
     ></svg>
   </div>
 
+  <!-- 右カラム：スクロールで画面右外からインしてくる説明＋ショップ誘導。
+       テキストはカンプ2を起こしたもの。文言・URLは後から差し替え前提。
+       NOTE: 本文の緯度経度(35.69/139.69)は左上タイトル(35.44/139.45)と不一致。
+             どちらかに揃える際は下の #about 本文を編集。 -->
+  <div id="content-panel">
+    <section id="about" class="content-block">
+      <h2 class="content-heading">太陽と二四節気のインフォグラフィックカレンダー</h2>
+      <p class="content-body">
+        太陽の年間軌跡を可視化したインフォグラフィックです。<br>
+        現在時刻の太陽高度が見て分かります。<br>
+        　　<br>
+        大きな円は365本（閏年には366本）の波で出来ています。それぞれ一日の太陽の動きを表し、中心から外側への振幅はその日の高度に対応します。<br>
+        薄く記した円は水平線を表しており、それより外側が昼間の時間、内側が夜の時間です。<br>
+        夏は昼間の時間が長く、冬は短いことが視覚的に分かります。<br>
+        　　<br>
+        太陽の軌道は Jean Meeus『Astronomical Algorithms』に基づいて計算しています。<br>
+        二十四節気の日時は国立天文台「暦要項」と一致を確認済み。<br>
+      </p>
+    </section>
+
+    <section id="onsale" class="content-block">
+      <h2 class="content-heading">2027年版　Creemaにて販売中</h2>
+      <p class="content-body">
+        <a class="shop-link" href="https://www.creema.jp/item/16748513/detail" target="_blank" rel="noopener">Creema　https://www.creema.jp/item/16748513/detail</a>
+      </p>
+      <p class="content-note">
+        boothにてスマホ待ち受け・PC壁紙サイズを無料配布しています。<br>
+      </p>
+      <p class="content-body">
+        <a class="shop-link" href="https://highwayoasis.booth.pm/items/8257164" target="_blank" rel="noopener">Booth　https://highwayoasis.booth.pm/items/8257164</a>
+      </p>
+    </section>
+
+    <section id="custom" class="content-block">
+      <h2 class="content-heading">受注製作　メモリアルカレンダー</h2>
+      <p class="content-body">
+        産まれた年、生まれた場所での太陽高度を計算した、オーダーメイド商品です。<br>
+        出生時間は輝く太陽で表されます。<br>
+        誕生祝いのプレゼントに、大切な人への贈り物にいかがですか。<br>
+
+      </p>
+      <p class="content-body">
+        <a class="shop-link" href="https://www.creema.jp/item/16748513/detail" target="_blank" rel="noopener">Creema　https://www.creema.jp/item/16748513/detail</a>
+      </p>
+    </section>
+  </div>
+
+  <!-- スクロール誘導。縦操作で横パララックスする想定なので下向きシェブロン。
+       初期は opacity 0、playIntro() がフェードインさせる。 -->
+  <div id="scroll-hint" aria-hidden="true">
+    <span class="label">Scroll</span>
+    <svg class="chevron" viewBox="0 0 24 12" width="22" height="11" aria-hidden="true">
+      <path d="M2 2 L12 10 L22 2" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>
+
   <script type="module" src="src/main.js"></script>
 </body>
 </html>

@@ -25,11 +25,25 @@
 html,
 body {
   width: 100%;
-  height: 100%;
   background: #0e1218;
   color: #fff;
   font-family: 'Noto Serif JP', serif;
-  overflow: hidden;
+  overflow-x: hidden;   /* 横スクロールバーは出さない */
+}
+
+/* body をビューポートより縦に長くしてスクロール量を作る。
+   この縦スクロール量が、横パララックスが完了するまでの距離になる。
+   ★パララックスの「スクロールの長さ」を変えたいときはこの値を調整 */
+body {
+  min-height: 220vh;
+}
+
+/* モバイルは横パララックス無効（縦スクロールの余白も作らない） */
+@media (max-width: 768px) {
+  body {
+    min-height: 100vh;
+    overflow: hidden;
+  }
 }
 
 /* ============================
@@ -86,11 +100,16 @@ body {
  * リング表示エリア
  * ============================ */
 #ring-container {
-  width: 100vw;
-  height: 100vh;
+  position: fixed;        /* スクロールしても画面に固定 */
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /* ★スクロール完了時にリングを左へ寄せる量（微調整ポイント） */
+  --ring-shift: -22vw;
+  /* --p（スクロール進捗 0→1）は main.js が :root に書き込む */
+  transform: translateX(calc(var(--p, 0) * var(--ring-shift)));
 }
 
 #ring-svg {
@@ -98,4 +117,135 @@ body {
   height: 100vh;
   max-width: 100vw;
   /* SVGに対する基本フォントは設定しないーー各要素で個別指定 */
+}
+
+/* ============================
+ * スクロール誘導（下向きシェブロン）
+ * ============================ */
+#scroll-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  opacity: 0;            /* オープニングの playIntro() がフェードインさせる */
+  pointer-events: none;  /* クリックを下のリングに通す */
+}
+
+#scroll-hint .label {
+  font-family: 'HakkouMincho', serif;
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  /* letter-spacing で右に寄るぶんを相殺してセンタリング */
+  text-indent: 0.25em;
+}
+
+#scroll-hint .chevron {
+  display: block;
+  animation: scroll-bob 1.8s ease-in-out infinite;
+}
+
+@keyframes scroll-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
+}
+
+/* モバイルでは時刻表示(#current-datetime, bottom:32px)と被らないよう下げる */
+@media (max-width: 768px) {
+  #scroll-hint {
+    bottom: 10px;
+  }
+}
+
+/* ============================
+ * 右カラム（スクロールで右からインする説明＋ショップ）
+ * 位置・サイズは microcopy ごとに id/class を振ってあるので個別調整しやすい。
+ * ============================ */
+#content-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 5;
+
+  /* ★カラムの幅と内側余白（微調整ポイント） */
+  width: 48vw;
+  height: 100vh;
+  padding: 9vh 5vw 9vh 3vw;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2.4em;               /* ★セクション間の縦間隔 */
+
+  color: #ffffff;
+  /* 初期は画面右の外、--p に応じて定位置(0)へスライドイン */
+  transform: translateX(calc((1 - var(--p, 0)) * 110%));
+  /* スライドインに合わせて軽くフェード（不要なら opacity 行を削除） */
+  opacity: var(--p, 0);
+}
+
+/* --- セクション共通 --- */
+.content-block {
+  /* 必要なら個別 section(#about / #onsale / #custom) で上書き */
+}
+
+.content-heading {
+  font-family: 'HakkouMincho', serif;
+  font-size: 1.6rem;        /* ★見出しサイズ */
+  font-weight: normal;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.8em;
+}
+
+.content-body {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.95rem;       /* ★本文サイズ */
+  line-height: 1.9;
+  color: #e8e8e8;
+}
+
+/* 補足（無料配布などの小さめテキスト） */
+.content-note {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: #b8b8b8;
+  margin: 0.4em 0;
+}
+
+/* ショップリンク */
+.shop-link {
+  color: #cfd6e0;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  word-break: break-all;    /* 長いURLでの折返し */
+}
+.shop-link:hover {
+  color: #ffffff;
+}
+
+/* セクション内の段落どうしの余白 */
+.content-block > * + * {
+  margin-top: 0.6em;
+}
+
+/* モバイルでは横パララックスを使わないので右カラムは隠す
+   （モバイル用の縦積みレイアウトは別途・カンプ3対応で実装予定） */
+@media (max-width: 768px) {
+  #content-panel {
+    display: none;
+  }
+}
+
+/* モーション軽減設定では揺れを止める（出現アニメも playIntro 側で即時化） */
+@media (prefers-reduced-motion: reduce) {
+  #scroll-hint .chevron {
+    animation: none;
+  }
 }

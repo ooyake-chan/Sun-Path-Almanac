@@ -109,11 +109,26 @@ export function renderRing(svg, year, lat, lon) {
         </g>
       </g>
     </symbol>
+
+    <!-- オープニング用クロックワイプ・マスク。
+         半径11・線幅22の円で中心(0,0)から外周まで塗りつぶし、
+         stroke-dasharray の dash側を 0→1.05 にアニメすると 12時起点・時計回りに開く。
+         初期値 dash=0（=リング非表示）。playIntro() が dash=1.05 までアニメする。 -->
+    <mask id="clock-wipe" maskUnits="userSpaceOnUse" x="-25" y="-25" width="50" height="50">
+      <circle id="wipe-circle" cx="0" cy="0" r="11" fill="none" stroke="#ffffff"
+              stroke-width="22" pathLength="1" stroke-dasharray="0 1"
+              transform="rotate(-90 0 0)" />
+    </mask>
   `;
   svg.appendChild(defs);
 
+  // ---- リング本体を1つのグループにまとめ、クロックワイプ・マスクを掛ける ----
+  // （太陽マーカーはこのグループの外＝マスク対象外に置く）
+  const ringLayer = el('g', { id: 'ring-layer', mask: 'url(#clock-wipe)' });
+  svg.appendChild(ringLayer);
+
   // ---- 地平線 ----
-  svg.appendChild(
+  ringLayer.appendChild(
     el('circle', {
       cx: 0,
       cy: 0,
@@ -138,12 +153,12 @@ export function renderRing(svg, year, lat, lon) {
       d += (j === 0 ? 'M ' : ' L ') + x.toFixed(4) + ' ' + y.toFixed(4);
     }
     const color = interpolateSeasonColor(i / nDays);
-    svg.appendChild(
+    ringLayer.appendChild(
       el('path', {
         d,
         fill: 'none',
         stroke: color,
-        'stroke-width': '0.04',
+        'stroke-width': '0.02', //描画線の太さ
         opacity: '0.78',
       })
     );
@@ -202,7 +217,7 @@ export function renderRing(svg, year, lat, lon) {
     }
 
     // マーカー（星型シンボル参照、color で fill 上書き）
-    svg.appendChild(
+    ringLayer.appendChild(
       el('use', {
         href: symbolId,
         x: mx - markerSize / 2,
@@ -237,7 +252,7 @@ export function renderRing(svg, year, lat, lon) {
     const month = t.datetime.getUTCMonth() + 1;
     const day = t.datetime.getUTCDate();
     dateText.textContent = `${month}/${day}`;
-    svg.appendChild(dateText);
+    ringLayer.appendChild(dateText);
 
     // 漢字
     const kanjiText = el('text', {
@@ -250,10 +265,10 @@ export function renderRing(svg, year, lat, lon) {
       'font-family': kanjiFamily,
     });
     kanjiText.textContent = t.kanji;
-    svg.appendChild(kanjiText);
+    ringLayer.appendChild(kanjiText);
   }
 
-  // ---- 現在時刻の太陽マーカー ----
+  // ---- 現在時刻の太陽マーカー（ringLayer の外＝マスク対象外） ----
   renderCurrentMomentSun(svg, year, lat);
 }
 
@@ -284,8 +299,9 @@ export function renderCurrentMomentSun(svg, year, lat) {
   }
 
   // sum.svg を <image> で参照（外部SVGをそのままラスタライズして表示）
-  const SUN_SIZE = 5; 
-   const g = el('g', { id: 'sun-marker', transform: `translate(${sx}, ${sy})` });
+  // opacity 0 で生成し、playIntro() がフェードインさせる。
+  const SUN_SIZE = 5;
+   const g = el('g', { id: 'sun-marker', transform: `translate(${sx}, ${sy})`, opacity: '0' });
   const sunImg = el('image', {
     href: 'sun.svg',
     x: -SUN_SIZE / 2,
