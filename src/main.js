@@ -60,6 +60,9 @@ async function init() {
 
   // スクロール連動パララックス（PCのみ）
   setupParallax();
+
+  // モバイル縦スクロール（スマホのみ）
+  setupMobileScroll();
 }
 
 function updateDateTime() {
@@ -184,6 +187,70 @@ function setupParallax() {
     if (hint && progress > 0.001) {
       hint.style.opacity = String(1 - progress);
     }
+
+    ticking = false;
+  }
+
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    },
+    { passive: true }
+  );
+
+  update(); // 初期化
+}
+
+// ============================
+// モバイル縦スクロール（スマホ）
+// リング表示エリアの高さを --mp で縮め、コンテンツを下からフワっと立ち上げる。
+// 動き自体は style.css 側（@media max-width:768px）が --mp と .in-view を見て行う。
+// ============================
+const RING_BAND_VH = 26; // ★固定時に残すバンド高さ。style.css の --ring-band と揃える
+
+function setupMobileScroll() {
+  if (window.innerWidth > 768) return;
+
+  const root = document.documentElement;
+  const hint = document.getElementById('scroll-hint');
+  const datetime = document.getElementById('current-datetime');
+
+  // 各セクションを下からフワっと表示
+  const blocks = document.querySelectorAll('#content-panel .content-block');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            io.unobserve(e.target); // 一度出たら監視解除
+          }
+        }
+      },
+      { threshold: 0.2 }
+    );
+    blocks.forEach((b) => io.observe(b));
+  } else {
+    blocks.forEach((b) => b.classList.add('in-view'));
+  }
+
+  // スクロール進捗 --mp（リング表示エリアの縮小用, 0→1）
+  let ticking = false;
+  function update() {
+    const bandPx = window.innerHeight * (RING_BAND_VH / 100);
+    const denom = window.innerHeight - bandPx; // リングが縮みきるまでのスクロール量
+    const mp = denom > 0
+      ? Math.min(1, Math.max(0, window.scrollY / denom))
+      : 0;
+    root.style.setProperty('--mp', mp.toFixed(4));
+
+    // スクロールに従ってスクロール誘導・時刻表示をフェードアウト
+    if (hint && mp > 0.001) hint.style.opacity = String(1 - mp);
+    if (datetime && mp > 0.001) datetime.style.opacity = String(1 - mp);
 
     ticking = false;
   }

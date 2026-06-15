@@ -38,11 +38,11 @@ body {
   min-height: 220vh;
 }
 
-/* モバイルは横パララックス無効（縦スクロールの余白も作らない） */
+/* モバイルは横パララックス無効。代わりに縦スクロールで下からコンテンツが出る。
+   スクロール量は #content-panel の margin-top:100vh が生む（モバイル用ブロック参照）。 */
 @media (max-width: 768px) {
   body {
     min-height: 100vh;
-    overflow: hidden;
   }
 }
 
@@ -235,11 +235,68 @@ body {
   margin-top: 0.6em;
 }
 
-/* モバイルでは横パララックスを使わないので右カラムは隠す
-   （モバイル用の縦積みレイアウトは別途・カンプ3対応で実装予定） */
+/* ============================
+ * モバイル：縦スクロール版（カンプ3）
+ *   リング表示エリアが上部のバンドに縮んで固定され、
+ *   その下からコンテンツが順に立ち上がる。
+ * ============================ */
 @media (max-width: 768px) {
+  /* リング表示エリア：画面上部に固定。
+     スクロール進捗 --mp で高さが 100vh → --ring-band に縮み、
+     下端でバンドとして残る（画面外には消えない）。 */
+  #ring-container {
+    position: fixed;
+    inset: 0 0 auto 0;                 /* top:0 / left:0 / right:0 / bottom:auto */
+    width: 100vw;
+    height: calc(100vh - (100vh - var(--ring-band)) * var(--mp, 0));
+    overflow: hidden;                  /* 縮んだぶんのリングを切り取る */
+    background: #0e1218;               /* 裏を流れるコンテンツを隠す */
+    z-index: 5;
+    transform: none;                   /* PC用の横移動を無効化 */
+
+    /* ★固定時に残すバンドの高さ（微調整ポイント。main.js の RING_BAND_VH と揃える） */
+    --ring-band: 26vh;
+  }
+
+  /* 説明カラム：通常フローに戻し、初期フルリング(100vh)の下から開始。
+     スクロールで上に流れ、バンドの裏へ隠れていく。 */
   #content-panel {
-    display: none;
+    display: block;
+    position: static;
+    width: 100%;
+    height: auto;
+    margin-top: 100vh;                 /* 初期フルリングのぶん下げる */
+    padding: 8vw 7vw 18vw;             /* ★内側余白（微調整ポイント） */
+    transform: none;                   /* PC用スライドインを無効化 */
+    opacity: 1;
+    gap: 0;
+    z-index: 1;
+  }
+
+  /* 各セクションを「下からフワっと」表示
+     （IntersectionObserver が画面に入った要素に .in-view を付与する） */
+  .content-block {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    margin-bottom: 14vw;               /* ★セクション間隔（微調整ポイント） */
+  }
+  .content-block.in-view {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* モバイルの見出し/本文サイズ（必要なら調整） */
+  .content-heading { font-size: 1.3rem; }
+  .content-body    { font-size: 0.95rem; }
+}
+
+/* モーション軽減設定では「フワっと」を無効化（即表示） */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .content-block {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 
