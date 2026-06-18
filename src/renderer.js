@@ -12,6 +12,11 @@ const BASE_RADIUS = 10;
 const ALTITUDE_SCALE = 0.06;
 const HORIZON_COLOR = '#5a4032';
 
+// 観測モード（東京以外）の白黒スタイル ★微調整ポイント
+const OBSERVATORY_LINE_COLOR = '#dfe6ee';
+const OBSERVATORY_LINE_OPACITY = '0.5';
+const OBSERVATORY_HORIZON_COLOR = '#7a818c';
+
 const MAJOR_TERMS = new Set([0, 90, 180, 270]); // 二分二至
 const SECONDARY_TERMS = new Set([45, 135, 225, 315]); // 四立
 
@@ -84,9 +89,11 @@ function polarToXY(r, theta) {
 // ============================
 // メイン描画関数
 // ============================
-export function renderRing(svg, year, lat, lon) {
+// mode: 'almanac'（東京・季節色＋二十四節気） / 'observatory'（白黒・太陽高度のみ）
+export function renderRing(svg, year, lat, lon, mode = 'almanac') {
+  const isAlmanac = mode === 'almanac';
   const nDays = daysInYear(year);
-  const terms = get24SolarTermsJst(year);
+  const terms = isAlmanac ? get24SolarTermsJst(year) : [];
 
   // 既存の子要素をクリア
   while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -134,9 +141,9 @@ export function renderRing(svg, year, lat, lon) {
       cy: 0,
       r: BASE_RADIUS,
       fill: 'none',
-      stroke: HORIZON_COLOR,
+      stroke: isAlmanac ? HORIZON_COLOR : OBSERVATORY_HORIZON_COLOR,
       'stroke-width': '0.06',
-      opacity: '0.6',
+      opacity: isAlmanac ? '0.6' : '0.7',
     })
   );
 
@@ -152,20 +159,20 @@ export function renderRing(svg, year, lat, lon) {
       const [x, y] = polarToXY(r, theta);
       d += (j === 0 ? 'M ' : ' L ') + x.toFixed(4) + ' ' + y.toFixed(4);
     }
-    const color = interpolateSeasonColor(i / nDays);
+    const color = isAlmanac ? interpolateSeasonColor(i / nDays) : OBSERVATORY_LINE_COLOR;
     ringLayer.appendChild(
       el('path', {
         d,
         fill: 'none',
         stroke: color,
         'stroke-width': '0.02', //描画線の太さ
-        opacity: '0.78',
+        opacity: isAlmanac ? '0.78' : OBSERVATORY_LINE_OPACITY,
       })
     );
   }
 
-  // ---- 節気マーカー＋ラベル ----
-  for (const t of terms) {
+  // ---- 節気マーカー＋ラベル（暦モードのみ。terms は観測モードでは空） ----
+  if (isAlmanac) for (const t of terms) {
     const doy = t.dayOfYear;
     if (doy < 0 || doy >= nDays) continue;
 
@@ -269,19 +276,23 @@ export function renderRing(svg, year, lat, lon) {
   }
 
   // ---- 現在時刻の太陽マーカー（ringLayer の外＝マスク対象外） ----
-  renderCurrentMomentSun(svg, year, lat);
+  renderCurrentMomentSun(svg, year, lat, lon);
 }
 
-/** 現在JST時刻の太陽位置に sum.svg を配置 */
-export function renderCurrentMomentSun(svg, year, lat) {
+/**
+ * 現在の太陽位置に sun.svg を配置する。
+ * 時刻は経度から求めた「地方平均太陽時」(UTC + lon/15時間)を使用。タイムゾーン不要で、
+ * その地点の太陽がリング上のどこにあるかを示す。
+ */
+export function renderCurrentMomentSun(svg, year, lat, lon = 139.45) {
   const nDays = daysInYear(year);
-  const now = new Date();
-  const jstNow = new Date(now.getTime() + 9 * 3600 * 1000);
-  // ↓テスト用手入力時刻　↑本番用時刻
-  //const jstNow = new Date(Date.UTC(year, 5, 22, 0, 0, 0));
+  // 地方平均太陽時（ミリ秒）。この時刻の太陽がリング上の現在位置になる。
+  const lmstMs = Date.now() + (lon / 15) * 3600 * 1000;
+  // ↓テスト用手入力時刻（地方時として扱う）
+  //const lmstMs = Date.UTC(year, 5, 22, 0, 0, 0);
 
-  const yearStart = new Date(Date.UTC(year, 0, 1));
-  const doyDecimal = (jstNow.getTime() - yearStart.getTime()) / 86400000;
+  const yearStart = new Date(Date.UTC(year, 0, 1)).getTime();
+  const doyDecimal = (lmstMs - yearStart) / 86400000;
 
   if (doyDecimal < 0 || doyDecimal >= nDays) return;
 
