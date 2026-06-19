@@ -28,18 +28,15 @@ body {
   background: #0e1218;
   color: #fff;
   font-family: 'Noto Serif JP', serif;
-  overflow-x: hidden;   /* 横スクロールバーは出さない */
+  overflow-x: hidden;  
 }
 
-/* body をビューポートより縦に長くしてスクロール量を作る。
-   この縦スクロール量が、横パララックスが完了するまでの距離になる。
-   ★パララックスの「スクロールの長さ」を変えたいときはこの値を調整 */
+
 body {
   min-height: 220vh;
 }
 
-/* モバイルは横パララックス無効。代わりに縦スクロールで下からコンテンツが出る。
-   スクロール量は #content-panel の margin-top:100vh が生む（モバイル用ブロック参照）。 */
+
 @media (max-width: 768px) {
   body {
     min-height: 100vh;
@@ -100,23 +97,28 @@ body {
  * リング表示エリア
  * ============================ */
 #ring-container {
-  position: fixed;        /* スクロールしても画面に固定 */
-  inset: 0;
+  position: fixed; 
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: calc(100vw - var(--p, 0) * 50vw);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* ★スクロール完了時にリングを左へ寄せる量（微調整ポイント） */
-  --ring-shift: -22vw;
-  /* --p（スクロール進捗 0→1）は main.js が :root に書き込む */
-  transform: translateX(calc(var(--p, 0) * var(--ring-shift)));
 }
 
 #ring-svg {
   width: 100vh;
   height: 100vh;
   max-width: 100vw;
-  /* SVGに対する基本フォントは設定しないーー各要素で個別指定 */
+}
+
+@media (min-width: 769px) {
+  #ring-svg {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
 }
 
 /* ============================
@@ -133,15 +135,14 @@ body {
   align-items: center;
   gap: 6px;
   color: #ffffff;
-  opacity: 0;            /* オープニングの playIntro() がフェードインさせる */
-  pointer-events: none;  /* クリックを下のリングに通す */
+  opacity: 0;            
+  pointer-events: none;  
 }
 
 #scroll-hint .label {
   font-family: 'HakkouMincho', serif;
   font-size: 12px;
   letter-spacing: 0.25em;
-  /* letter-spacing で右に寄るぶんを相殺してセンタリング */
   text-indent: 0.25em;
 }
 
@@ -154,8 +155,6 @@ body {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(5px); }
 }
-
-/* モバイルでは時刻表示(#current-datetime, bottom:32px)と被らないよう下げる */
 @media (max-width: 768px) {
   #scroll-hint {
     bottom: 10px;
@@ -163,8 +162,7 @@ body {
 }
 
 /* ============================
- * 右カラム（スクロールで右からインする説明＋ショップ）
- * 位置・サイズは microcopy ごとに id/class を振ってあるので個別調整しやすい。
+ * 右カラム
  * ============================ */
 #content-panel {
   position: fixed;
@@ -172,7 +170,6 @@ body {
   right: 0;
   z-index: 5;
 
-  /* ★カラムの幅と内側余白（微調整ポイント） */
   width: 48vw;
   height: 100vh;
   padding: 9vh 5vw 9vh 3vw;
@@ -181,12 +178,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2.4em;               /* ★セクション間の縦間隔 */
+  gap: 2.4em; 
 
   color: #ffffff;
-  /* 初期は画面右の外、--p に応じて定位置(0)へスライドイン */
   transform: translateX(calc((1 - var(--p, 0)) * 110%));
-  /* スライドインに合わせて軽くフェード（不要なら opacity 行を削除） */
   opacity: var(--p, 0);
 }
 
@@ -194,7 +189,7 @@ body {
 
 .content-heading {
   font-family: 'HakkouMincho', serif;
-  font-size: 1.6rem;        /* ★見出しサイズ */
+  font-size: 1.6rem; 
   font-weight: normal;
   letter-spacing: 0.04em;
   margin-bottom: 0.8em;
@@ -202,12 +197,12 @@ body {
 
 .content-body {
   font-family: 'Noto Serif JP', serif;
-  font-size: 0.95rem;       /* ★本文サイズ */
+  font-size: 0.95rem; 
   line-height: 1.9;
   color: #e8e8e8;
 }
 
-/* 補足（無料配布などの小さめテキスト） */
+/* 補足 */
 .content-note {
   font-family: 'Noto Serif JP', serif;
   font-size: 0.85rem;
@@ -221,13 +216,13 @@ body {
   color: #cfd6e0;
   text-decoration: underline;
   text-underline-offset: 0.2em;
-  word-break: break-all;    /* 長いURLでの折返し */
+  word-break: break-all;  
 }
 .shop-link:hover {
   color: #ffffff;
 }
 
-/* 世界の太陽高度モードのボタン */
+/* 世界の太陽高度 */
 .mode-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -255,68 +250,115 @@ body {
   border-color: #ffffff;
 }
 
-/* セクション内の段落どうしの余白 */
+/* ============================
+ * タッチ誘導
+ * ============================ */
+#touch-hint {
+  display: none; 
+}
+
+@media (max-width: 768px) {
+  #touch-hint {
+    display: block;
+    position: fixed;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    z-index: 8;
+    width: 64px; 
+    height: 64px;
+    color: #ffffff;
+    pointer-events: none; 
+    opacity: 0; 
+  }
+
+  /* touch円 */
+  .touch-core {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 50%;
+    font-family: 'HakkouMincho', serif;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* リップル */
+  .touch-ripple {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    opacity: 0;
+    animation: touch-ripple 2.4s ease-out infinite;
+  }
+  .touch-ripple:nth-of-type(2) {
+    animation-delay: 1.2s;
+  }
+}
+
+@keyframes touch-ripple {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .touch-ripple { animation: none; }
+}
+
 .content-block > * + * {
   margin-top: 0.6em;
 }
 
 /* ============================
- * モバイル：縦スクロール版（カンプ3）
- *   リング表示エリアが上部のバンドに縮んで固定され、
- *   その下からコンテンツが順に立ち上がる。
+ * モバイル
  * ============================ */
 @media (max-width: 768px) {
-  /* リング表示エリア：画面上部に固定。
-     スクロール進捗 --mp で高さが 100vh → --ring-band に縮み、
-     下端でバンドとして残る（画面外には消えない）。 */
   #ring-container {
     position: fixed;
-    inset: 0 0 auto 0;                 /* top:0 / left:0 / right:0 / bottom:auto */
+    inset: 0 0 auto 0;  
     width: 100vw;
     height: calc(100vh - (100vh - var(--ring-band)) * var(--mp, 0));
-    overflow: hidden;                  /* 縮んだぶんのリングを切り取る */
-    background: #0e1218;               /* 裏を流れるコンテンツを隠す */
+    overflow: hidden;                  
+    background: #0e1218;               
     z-index: 5;
-    transform: none;                   /* PC用の横移動を無効化 */
-
-    /* ★固定時に残すバンドの高さ（微調整ポイント。main.js の RING_BAND_VH と揃える） */
+    transform: none;                  
     --ring-band: 26vh;
   }
 
-  /* 説明カラム：通常フローに戻し、初期フルリング(100vh)の下から開始。
-     スクロールで上に流れ、バンドの裏へ隠れていく。 */
+
   #content-panel {
     display: block;
     position: static;
     width: 100%;
     height: auto;
-    margin-top: 100vh;                 /* 初期フルリングのぶん下げる */
-    padding: 8vw 7vw 18vw;             /* ★内側余白（微調整ポイント） */
-    transform: none;                   /* PC用スライドインを無効化 */
+    margin-top: 100vh;                 
+    padding: 8vw 7vw 18vw;            
+    transform: none;                   
     opacity: 1;
     gap: 0;
     z-index: 1;
   }
 
-  /* 各セクションを「下からフワっと」表示
-     （IntersectionObserver が画面に入った要素に .in-view を付与する） */
+
   .content-block {
     opacity: 0;
     transform: translateY(40px);
     transition: opacity 0.7s ease, transform 0.7s ease;
-    margin-bottom: 14vw;               /* ★セクション間隔（微調整ポイント） */
+    margin-bottom: 14vw;              
   }
   .content-block.in-view {
     opacity: 1;
     transform: none;
   }
 
-  /* モバイルの見出し/本文サイズ（必要なら調整） */
   .content-heading { font-size: 1.3rem; }
   .content-body    { font-size: 0.95rem; }
 }
 
-/* モーション軽減設定では「フワっと」を無効化（即表示） */
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
   .content-block {
     opacity: 1;
@@ -325,7 +367,6 @@ body {
   }
 }
 
-/* モーション軽減設定では揺れを止める（出現アニメも playIntro 側で即時化） */
 @media (prefers-reduced-motion: reduce) {
   #scroll-hint .chevron {
     animation: none;

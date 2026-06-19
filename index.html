@@ -31,10 +31,12 @@
     ></svg>
   </div>
 
-  <!-- 右カラム：スクロールで画面右外からインしてくる説明＋ショップ誘導。
-       テキストはカンプ2を起こしたもの。文言・URLは後から差し替え前提。
-       NOTE: 本文の緯度経度(35.69/139.69)は左上タイトル(35.44/139.45)と不一致。
-             どちらかに揃える際は下の #about 本文を編集。 -->
+  <div id="touch-hint" aria-hidden="true">
+    <span class="touch-ripple"></span>
+    <span class="touch-ripple"></span>
+    <span class="touch-core">touch</span>
+  </div>
+
   <div id="content-panel">
     <section id="about" class="content-block">
       <h2 class="content-heading">太陽と二四節気のインフォグラフィックカレンダー</h2>
@@ -51,8 +53,6 @@
       </p>
     </section>
 
-    <!-- 世界の太陽高度モード：地点プリセット切替（東京=暦モード / 他=白黒観測モード）。
-         ボタンの data-preset は main.js の PRESETS のキーと対応。 -->
     <section id="world-mode" class="content-block">
       <h2 class="content-heading">世界の太陽高度</h2>
       <div class="mode-buttons">
@@ -77,11 +77,15 @@
       <p class="content-body">
         <a class="shop-link" href="https://www.creema.jp/item/16748513/detail" target="_blank" rel="noopener">Creema　https://www.creema.jp/item/16748513/detail</a>
       </p>
+      <p class="content-body">
+        製作者連絡先</a>
+      </p>
+      <p class="content-body">
+        <a class="shop-link" href="https://x.com/OOyake_" target="_blank" rel="noopener">X:ID OOyake_</a>
+      </p>
     </section>
   </div>
 
-  <!-- スクロール誘導。縦操作で横パララックスする想定なので下向きシェブロン。
-       初期は opacity 0、playIntro() がフェードインさせる。 -->
   <div id="scroll-hint" aria-hidden="true">
     <span class="label">Scroll</span>
     <svg class="chevron" viewBox="0 0 24 12" width="22" height="11" aria-hidden="true">
