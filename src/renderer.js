@@ -309,7 +309,7 @@ export function renderCurrentMomentSun(svg, year, lat, lon = 139.45) {
     return[sx, sy];
   }
 
-  // sum.svg を <image> で参照（外部SVGをそのままラスタライズして表示）
+  // sun.svg を <image> で参照（外部SVGをそのままラスタライズして表示）
   // opacity 0 で生成し、playIntro() がフェードインさせる。
   const SUN_SIZE = 5;
    const g = el('g', { id: 'sun-marker', transform: `translate(${sx}, ${sy})`, opacity: '0' });

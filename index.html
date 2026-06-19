@@ -3,7 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>太陽と暦のカレンダー</title>
+
+  <!-- セキュリティ：静的サイト向けの Content-Security-Policy（防御の上乗せ）。
+       スクリプトは自サイトのみ許可。スタイルは自サイト＋インライン（SVGのstyle属性）＋Google Fonts。
+       新しい外部読み込みを足す時はここに許可ドメインを追加する。 -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 img-src 'self' data:;
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                 font-src 'self' https://fonts.gstatic.com;
+                 script-src 'self';
+                 base-uri 'self';
+                 form-action 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="theme-color" content="#0e1218" />
+
+  <!-- ===== SEO ===== -->
+  <title>太陽と暦のカレンダー｜二十四節気と太陽高度のインフォグラフィック</title>
+  <meta name="description"
+        content="東京の一年間の太陽軌跡と二十四節気を可視化したインフォグラフィックカレンダー。365日分の太陽高度を円環で描き、現在時刻の太陽位置をリアルタイム表示。世界各地の太陽高度モードも切り替えられます。" />
+
+  <!-- ★公開URLが決まったら以下の canonical / og:url / og:image を実URLに置き換える -->
+  <link rel="canonical" href="https://example.com/" />
+
+  <!-- ===== OGP（Facebook / LINE / Slack 等のリンクプレビュー） ===== -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="太陽と暦のカレンダー" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:title" content="太陽と暦のカレンダー｜二十四節気と太陽高度のインフォグラフィック" />
+  <meta property="og:description"
+        content="一年間の太陽軌跡と二十四節気を円環で可視化。現在時刻の太陽位置をリアルタイム表示します。" />
+  <meta property="og:url" content="https://example.com/" />
+  <!-- ★1200×630 程度の画像を web/ogp.png として用意し、URLを実ドメインに -->
+  <meta property="og:image" content="https://example.com/ogp.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="二十四節気と太陽軌跡の円環インフォグラフィック" />
+
+  <!-- ===== Twitter（X）カード ===== -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="太陽と暦のカレンダー" />
+  <meta name="twitter:description" content="一年間の太陽軌跡と二十四節気を円環で可視化。現在時刻の太陽位置をリアルタイム表示。" />
+  <meta name="twitter:image" content="https://example.com/ogp.png" />
+  <meta name="twitter:site" content="@OOyake_" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -13,6 +56,9 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- 検索エンジン／スクリーンリーダー向けの見出し（視覚的には非表示） -->
+  <h1 class="visually-hidden">太陽と暦のカレンダー — 二十四節気と太陽高度のインフォグラフィックカレンダー</h1>
+
   <div id="top-left">
     <div id="year">2026</div>
     <div id="coords">35.44°N&nbsp;&nbsp;139.45°E</div>
@@ -39,7 +85,7 @@
 
   <div id="content-panel">
     <section id="about" class="content-block">
-      <h2 class="content-heading">太陽と二四節気のインフォグラフィックカレンダー</h2>
+      <h2 class="content-heading">太陽と二十四節気のインフォグラフィックカレンダー</h2>
       <p class="content-body">
         太陽の年間軌跡を可視化したインフォグラフィックです。<br>
         現在時刻の太陽高度が見て分かります。<br>
@@ -67,7 +113,7 @@
     <section id="onsale" class="content-block">
       <h2 class="content-heading">2027年ポスターカレンダー　Creemaにて販売中</h2>
       <p class="content-body">
-        <a class="shop-link" href="https://www.creema.jp/item/16748513/detail" target="_blank" rel="noopener">Creema　https://www.creema.jp/item/16748513/detail</a>
+        <a class="shop-link" href="https://www.creema.jp/c/ooyake" target="_blank" rel="noopener">Creema　https://www.creema.jp/c/ooyake</a>
       </p>
     </section>
     <section id="custom" class="content-block">
@@ -75,10 +121,10 @@
         産まれた年、生まれた場所での太陽高度を計算した、オーダーメイド商品もございます。<br>
       </p>
       <p class="content-body">
-        <a class="shop-link" href="https://www.creema.jp/item/16748513/detail" target="_blank" rel="noopener">Creema　https://www.creema.jp/item/16748513/detail</a>
+        <a class="shop-link" href="https://www.creema.jp/c/ooyake" target="_blank" rel="noopener">Creema　https://www.creema.jp/c/ooyake</a>
       </p>
       <p class="content-body">
-        製作者連絡先</a>
+        製作者連絡先
       </p>
       <p class="content-body">
         <a class="shop-link" href="https://x.com/OOyake_" target="_blank" rel="noopener">X:ID OOyake_</a>
