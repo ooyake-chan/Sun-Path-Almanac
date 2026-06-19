@@ -47,6 +47,15 @@ function applyMobileViewBox(svg) {
   }
 }
 
+// タッチ誘導（#touch-hint）の解除。最初のタップで一度だけ消す。
+let touchDismissed = false;
+function dismissTouchHint() {
+  if (touchDismissed) return;
+  touchDismissed = true;
+  const el = document.getElementById('touch-hint');
+  if (el) el.style.display = 'none';
+}
+
 async function init() {
   // カスタムフォントの読み込み完了を待つ（FOUT を抑える）
   if (document.fonts && document.fonts.ready) {
@@ -71,10 +80,11 @@ async function init() {
     mobileZoomed = true;
     applyMobileViewBox(svg);
 
-    // タップで全体/拡大を切り替え
+    // タップで全体/拡大を切り替え（初回タップでタッチ誘導を消す）
     svg.addEventListener('click', () => {
       mobileZoomed = !mobileZoomed;
       applyMobileViewBox(svg);
+      dismissTouchHint();
     });
   }
 
@@ -144,6 +154,7 @@ function playIntro(svg) {
   const sun = svg.querySelector('#sun-marker');
   const wipe = svg.querySelector('#wipe-circle');
   const hint = document.getElementById('scroll-hint');
+  const touch = document.getElementById('touch-hint'); // モバイル専用（PCはCSSで非表示）
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // フォールバック：アニメ無しで即時に最終状態へ
@@ -151,6 +162,7 @@ function playIntro(svg) {
     if (sun) sun.setAttribute('opacity', '1');
     svg.querySelector('#ring-layer')?.removeAttribute('mask');
     if (hint) hint.style.opacity = '1';
+    if (touch) touch.style.opacity = '1';
     return;
   }
 
@@ -176,13 +188,16 @@ function playIntro(svg) {
     },
   });
 
-  // 3) スクロール誘導（リング完成の約3秒後）
-  if (hint) {
+  // 3) スクロール誘導＋タッチ誘導（リング完成の約3秒後・同時にフェードイン）
+  if (hint || touch) {
     tween({
       delay: RING_START + RING_DUR + 3000,
       duration: 900,
       easing: easeOutCubic,
-      onUpdate: (v) => { hint.style.opacity = String(v); },
+      onUpdate: (v) => {
+        if (hint) hint.style.opacity = String(v);
+        if (touch) touch.style.opacity = String(v);
+      },
     });
   }
 }
@@ -327,6 +342,7 @@ function setupMobileScroll() {
   const root = document.documentElement;
   const hint = document.getElementById('scroll-hint');
   const datetime = document.getElementById('current-datetime');
+  const touch = document.getElementById('touch-hint');
 
   // 各セクションを下からフワっと表示
   const blocks = document.querySelectorAll('#content-panel .content-block');
@@ -357,9 +373,11 @@ function setupMobileScroll() {
       : 0;
     root.style.setProperty('--mp', mp.toFixed(4));
 
-    // スクロールに従ってスクロール誘導・時刻表示をフェードアウト
+    // スクロールに従ってスクロール誘導・時刻表示・タッチ誘導をフェードアウト
     if (hint && mp > 0.001) hint.style.opacity = String(1 - mp);
     if (datetime && mp > 0.001) datetime.style.opacity = String(1 - mp);
+    // タッチ誘導もスクロールでフェード（mp=0 のときは出現アニメに任せて触らない。タップ済みなら触らない）
+    if (touch && !touchDismissed && mp > 0.001) touch.style.opacity = String(1 - mp);
 
     ticking = false;
   }
