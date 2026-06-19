@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- セキュリティ：静的サイト向けの Content-Security-Policy（防御の上乗せ）。
-       スクリプトは自サイトのみ許可。スタイルは自サイト＋インライン（SVGのstyle属性）＋Google Fonts。
-       新しい外部読み込みを足す時はここに許可ドメインを追加する。 -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self';
                  img-src 'self' data:;
@@ -18,27 +15,24 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="theme-color" content="#0e1218" />
 
-  <!-- ★★★ pre-launch：検索インデックス停止中。正式公開（リンク確定）時にこの1行を削除する ★★★ -->
-  <meta name="robots" content="noindex, nofollow" />
+
 
   <!-- ===== SEO ===== -->
   <title>太陽と暦のカレンダー｜二十四節気と太陽高度のインフォグラフィック</title>
   <meta name="description"
         content="東京の一年間の太陽軌跡と二十四節気を可視化したインフォグラフィックカレンダー。365日分の太陽高度を円環で描き、現在時刻の太陽位置をリアルタイム表示。世界各地の太陽高度モードも切り替えられます。" />
 
-  <!-- ★公開URLが決まったら以下の canonical / og:url / og:image を実URLに置き換える -->
-  <link rel="canonical" href="https://example.com/" />
+  <link rel="canonical" href="https://ooyake-chan.github.io/Sun-Path-Almanac/" />
 
-  <!-- ===== OGP（Facebook / LINE / Slack 等のリンクプレビュー） ===== -->
+  <!-- ===== OGP ===== -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="太陽と暦のカレンダー" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:title" content="太陽と暦のカレンダー｜二十四節気と太陽高度のインフォグラフィック" />
   <meta property="og:description"
         content="一年間の太陽軌跡と二十四節気を円環で可視化。現在時刻の太陽位置をリアルタイム表示します。" />
-  <meta property="og:url" content="https://example.com/" />
-  <!-- ★1200×630 程度の画像を web/ogp.png として用意し、URLを実ドメインに -->
-  <meta property="og:image" content="https://example.com/ogp.png" />
+  <meta property="og:url" content="https://ooyake-chan.github.io/Sun-Path-Almanac/" />
+  <meta property="og:image" content="https://ooyake-chan.github.io/Sun-Path-Almanac/ogp.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="二十四節気と太陽軌跡の円環インフォグラフィック" />
@@ -47,7 +41,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="太陽と暦のカレンダー" />
   <meta name="twitter:description" content="一年間の太陽軌跡と二十四節気を円環で可視化。現在時刻の太陽位置をリアルタイム表示。" />
-  <meta name="twitter:image" content="https://example.com/ogp.png" />
+  <meta name="twitter:image" content="https://ooyake-chan.github.io/Sun-Path-Almanac/ogp.png" />
   <meta name="twitter:site" content="@OOyake_" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,7 +53,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- 検索エンジン／スクリーンリーダー向けの見出し（視覚的には非表示） -->
+  <!-- 検索エンジン／スクリーンリーダー向けの見出し -->
   <h1 class="visually-hidden">太陽と暦のカレンダー — 二十四節気と太陽高度のインフォグラフィックカレンダー</h1>
 
   <div id="top-left">
